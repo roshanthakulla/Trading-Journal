@@ -1,65 +1,122 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+import TradeForm from "@/components/Trade/TradeForm";
+import TradeStats from "@/components/Trade/TradeStats";
+import TradeList from "@/components/Trade/TradeList";
+import TradeChart from "@/components/Trade/TradeChart";
+import TradeCumulative from "@/components/Trade/TradeCumulative";
 
 export default function Home() {
+  const [trades, setTrades] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // 🔥 Get All Trades
+  useEffect(() => {
+    const getTrades = async () => {
+      try {
+        setLoading(true);
+        const { data } = await axios.get("/api/trade/get-all-trade");
+
+        if (!data.success) return;
+
+        setTrades(Array.isArray(data.trades) ? data.trades : []);
+      } catch (err) {
+        console.error(
+          "Error fetching trades:",
+          err.response?.data || err.message
+        );
+        setTrades([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getTrades();
+  }, []);
+
+  // 🔥 Add Trade
+  const addTrade = async (tradeData) => {
+    try {
+      const { data } = await axios.post(
+        "/api/trade/add-new-trade",
+        tradeData
+      );
+
+      if (!data.success) return;
+
+      setTrades((prev) => [data.trade, ...prev]); // ✅ safe update
+    } catch (err) {
+      console.error(
+        "Error creating trade:",
+        err.response?.data || err.message
+      );
+    }
+  };
+
+  // 🔥 Delete Trade (UI only)
+  const deleteTradeHandler = (id) => {
+    setTrades((prev) => prev.filter((t) => t._id !== id));
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-5">
+      <div className="max-w-6xl mx-auto space-y-6">
+
+        {/* 🔹 Heading */}
+        <h1 className="text-3xl font-bold tracking-tight">
+          📊 Trading Dashboard
+        </h1>
+
+        {/* 🔹 Form */}
+        <div className="bg-white/70 backdrop-blur-md border rounded-2xl p-5 shadow-sm">
+          <TradeForm onAdd={addTrade} />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+
+        {/* 🔹 Loading */}
+        {loading ? (
+          <div className="flex justify-center items-center py-10">
+            <div className="flex items-center gap-2 text-blue-600">
+              <span className="animate-spin border-2 border-blue-600 border-t-transparent rounded-full h-6 w-6"></span>
+              Loading trades...
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* 🔹 Empty State */}
+            {trades.length === 0 && (
+              <div className="text-center text-gray-500 py-10">
+                No trades yet 🚀 <br />
+                Start by adding your first trade.
+              </div>
+            )}
+
+            {/* 🔹 Stats */}
+            <TradeStats trades={trades} />
+
+            {/* 🔹 Charts */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-sm">
+                <TradeCumulative trades={trades} />
+              </div>
+
+              <div className="bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-sm">
+                <TradeChart trades={trades} />
+              </div>
+            </div>
+
+            {/* 🔹 Trade List */}
+            <div className="bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-sm">
+              <TradeList
+                trades={trades}
+                onDelete={deleteTradeHandler}
+              />
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
