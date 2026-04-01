@@ -1,3 +1,4 @@
+import { STRATEGIES } from "@/lib/strategy";
 import mongoose from "mongoose";
 
 const TradeModel = new mongoose.Schema(
@@ -7,24 +8,26 @@ const TradeModel = new mongoose.Schema(
       enum: ["buy", "sell"],
       required: true,
     },
-
+    
     entryPrice: {
       type: Number,
       required: true,
     },
-
+    
     exitPrice: {
       type: Number,
       required: true,
     },
-
-    // Optional (future use 🔥)
-    note: {
+    qty: {
+      type: Number,
+      required: true,
+    },
+    strategy: {
       type: String,
-      default: "",
+      enum: STRATEGIES,
+      default: "Breakout"
     },
 
-    // Soft delete (optional)
     deletedAt: {
       type: Date,
       default: null,
@@ -35,4 +38,4 @@ const TradeModel = new mongoose.Schema(
 
 // Prevent model overwrite (Next.js hot reload fix)
 export default mongoose.models.Trade ||
-  mongoose.model("Trade", tradeSchema);
+  mongoose.model("Trade", TradeModel);

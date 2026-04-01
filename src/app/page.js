@@ -8,6 +8,8 @@ import TradeStats from "@/components/Trade/TradeStats";
 import TradeList from "@/components/Trade/TradeList";
 import TradeChart from "@/components/Trade/TradeChart";
 import TradeCumulative from "@/components/Trade/TradeCumulative";
+import { toast } from "sonner";
+import TotalPnL from "@/components/Trade/TotalPnL";
 
 export default function Home() {
   const [trades, setTrades] = useState([]);
@@ -44,15 +46,17 @@ export default function Home() {
         "/api/trade/add-new-trade",
         tradeData
       );
-
+      toast.success("Trade Added SuccessFully.")
+      
       if (!data.success) return;
-
-      setTrades((prev) => [data.trade, ...prev]); // ✅ safe update
+      
+      setTrades((prev) => [data.trade, ...prev]); 
     } catch (err) {
       console.error(
         "Error creating trade:",
         err.response?.data || err.message
       );
+      toast.err("Failed Added Trade.")
     }
   };
 
@@ -113,7 +117,9 @@ export default function Home() {
                 trades={trades}
                 onDelete={deleteTradeHandler}
               />
+
             </div>
+            <TotalPnL trades={trades}/>
           </>
         )}
       </div>

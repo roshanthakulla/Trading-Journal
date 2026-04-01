@@ -7,8 +7,11 @@ export  async function  POST(request) {
  try {
      await dbConnect()
      const body = await request.json()
-     const { type,entryPrice, exitPrice } = body;
-      
+     const { type,entryPrice, exitPrice,qty, strategy } = body;
+
+     const finalQty = qty || 1;
+    const finalStrategy = strategy || "breakout";
+ 
       if (!type || !entryPrice || !exitPrice) {
       return NextResponse.json(
         { success: false, error: "All fields are required" },
@@ -20,6 +23,8 @@ export  async function  POST(request) {
         type,
         entryPrice,
         exitPrice,
+        qty: finalQty,
+        strategy: finalStrategy,
      })
 
      return NextResponse.json({success: true, trade:newTrade},{status: 201})
