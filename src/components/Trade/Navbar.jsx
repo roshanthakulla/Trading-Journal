@@ -3,9 +3,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Button } from "@base-ui/react";
+
 
 export default function Navbar() {
     const pathname = usePathname();
+
 
   const linkClass = (path) =>
     `transition ${
@@ -46,6 +49,7 @@ export default function Navbar() {
               + Add Trade
             </button>
           </Link>
+           
         </div>
 
       </div>

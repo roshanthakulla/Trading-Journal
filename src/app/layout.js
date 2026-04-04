@@ -1,17 +1,13 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Assistant } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import Navbar from "@/components/Trade/Navbar";
 import Footer from "@/components/Trade/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const assistantFont = Assistant({
+  weight: ['400', '500','600','700', '800'],
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: 'swap'
 });
 
 export const metadata = {
@@ -23,7 +19,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${assistantFont.className} antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <Navbar/>
