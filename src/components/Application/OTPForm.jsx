@@ -1,134 +1,119 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Form, FormField, FormItem, FormLabel } from '../ui/form'
+import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form'
 import BtnLoading from '../Trade/BtnLoading'
-import { RefreshCwIcon } from 'lucide-react'
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '../ui/input-otp'
-import { FieldDescription } from '@base-ui/react'
 
-const OTPForm = ({email,onSubmit, loading}) => {
-   
-    const formSchema = z.schema.pick({
-      otp: true, 
-      email: true,
-    })
+import { zSchema } from '@/lib/zodSchema'
+import { toast } from 'sonner'
+import axios from 'axios'
 
-    const from = useForm({
-        resolver:zodResolver(formSchema),
-        defaultValue: {
-            otp: "",
-            email: email
-        }
-    })
+const OTPForm = ({ email, onSubmit, loading }) => {
 
-    const handleOtpVerification=async (values)=>{
+  const [isResendOtp, setIsResendOtp] = useState(false);
 
+  const formSchema = zSchema.pick({
+    otp: true,
+    email: true,
+  })
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      otp: "",
+      email: email || ""
     }
+  })
+
+  const handleOtpVerification = async (values) => {
+    console.log("Form submitted with values:", values);
+
+     onSubmit(values)
+  }
+  const resendOtp = async () => {
+      try {
+       setIsResendOtp(true);
+       const { data: otpResponse } = await axios.post("/api/auth/resend-otp", {email});
+     
+       if (!otpResponse.success) throw new Error(otpResponse.message);
+       setOtpEmail(values.email)
+       
+       form.reset();
+       toast(otpResponse.message)
+     
+     } catch (error) {
+        toast( error.message || 'Something went wrong')
+     } finally {
+       setIsResendOtp(false);
+     } 
+  }
+
+  console.log(form.formState.errors);
 
   return (
-    <div>          
-        
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(handleOtpVerification)}
-                className="space-y-4 mt-4"
-              >
-                <div className="mb-5">
-                  <FormField
-                    control={form.control}
-                    name="otp"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>OTP</FormLabel>
-                        <FormControl>
-                         <InputOTP maxLength={6} {...field}>
-      <InputOTPGroup>
-        <InputOTPSlot index={0} />
-        <InputOTPSlot index={1} />
-        <InputOTPSlot index={2} />
-        <InputOTPSlot index={3} />
-        <InputOTPSlot index={4} />
-        <InputOTPSlot index={5} />
-      </InputOTPGroup>
-    </InputOTP>
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
+    <div>
+
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleOtpVerification)}
+          className="space-y-4 mt-4"
+          >
+
+          <div className="text-center">
+            <h1 className='text-2xl font-bold mb-2'>Please complete verification</h1>
+            <p className='text-md'>We have sent an One-time-Password (OTP) to your registered email. The OTP is valid for 10 minutes only.</p>
+
+          </div>
+          <div className="mb-5 mt-5 flex justify-center">
+            <FormField
+              control={form.control}
+              name="otp"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='font-semibold'>One-Time-Password (OTP)</FormLabel>
+                  <FormControl>
+                    <InputOTP maxLength={6} {...field}>
+                      <InputOTPGroup>
+                        <InputOTPSlot className="text-xl size-10" index={0} />
+                        <InputOTPSlot className="text-xl size-10" index={1} />
+                        <InputOTPSlot className="text-xl size-10" index={2} />
+                        <InputOTPSlot className="text-xl size-10" index={3} />
+                        <InputOTPSlot className="text-xl size-10" index={4} />
+                        <InputOTPSlot className="text-xl size-10" index={5} />
+                      </InputOTPGroup>
+                    </InputOTP>
+                  </FormControl>
+                </FormItem>
+              )}
+              />
+          </div>
 
 
-                <div className="mb-3">
-                  <BtnLoading
-                    loading={loading}
-                    type="submit"
-                    text="Login"
-                    className="w-full cursor-pointer"
-                  />
-                </div>
-                </form>
-                </Form>
+          <div className="mb-3">
+            <BtnLoading
+              loading={loading}
+              type="submit"
+              text="Verify"
+              className="w-full cursor-pointer bg-blue-500"
+              />
+
+              <div className="text-center mt-5">
+                {!isResendOtp ?
+                <button onClick={resendOtp} type='button' className='text-blue-600 cursor-pointer hover:underline'>Resend OTP</button>
+                :
+                <span className='text-md'>Resending.....</span>
+              }
+
+              </div>
+          </div>
+        </form>
+      </Form>
 
     </div>
 
 
-
-    // <Card className="mx-auto max-w-md">
-    //   <CardHeader>
-    //     <CardTitle>Verify your login</CardTitle>
-    //     <CardDescription>
-    //       Enter the verification code we sent to your email address:{" "}
-    //       <span className="font-medium">m@example.com</span>.
-    //     </CardDescription>
-    //   </CardHeader>
-    //   <CardContent>
-    //     <Field>
-    //       <div className="flex items-center justify-between">
-    //         <FieldLabel htmlFor="otp-verification">
-    //           Verification code
-    //         </FieldLabel>
-    //         <Button variant="outline" size="xs">
-    //           <RefreshCwIcon />
-    //           Resend Code
-    //         </Button>
-    //       </div>
-    //       <InputOTP maxLength={6} id="otp-verification" required>
-    //         <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
-    //           <InputOTPSlot index={0} />
-    //           <InputOTPSlot index={1} />
-    //           <InputOTPSlot index={2} />
-    //         </InputOTPGroup>
-    //         <InputOTPSeparator className="mx-2" />
-    //         <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
-    //           <InputOTPSlot index={3} />
-    //           <InputOTPSlot index={4} />
-    //           <InputOTPSlot index={5} />
-    //         </InputOTPGroup>
-    //       </InputOTP>
-    //       <FieldDescription>
-    //         <a href="#">I no longer have access to this email address.</a>
-    //       </FieldDescription>
-    //     </Field>
-    //   </CardContent>
-    //   <CardFooter>
-    //     <Field>
-    //       <Button type="submit" className="w-full">
-    //         Verify
-    //       </Button>
-    //       <div className="text-sm text-muted-foreground">
-    //         Having trouble signing in?{" "}
-    //         <a
-    //           href="#"
-    //           className="underline underline-offset-4 transition-colors hover:text-primary"
-    //         >
-    //           Contact support
-    //         </a>
-    //       </div>
-    //     </Field>
-    //   </CardFooter>
-    // </Card>
-  )
+            )
 }
 
 export default OTPForm

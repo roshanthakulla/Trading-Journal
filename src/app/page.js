@@ -15,12 +15,12 @@ export default function Home() {
   const [trades, setTrades] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 Get All Trades
+  // Get All Trades
   useEffect(() => {
     const getTrades = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get("/api/trade/get-all-trade");
+        const { data } = await axios.get("/api/trade/get-all-trade",{withCredentials: true,});
 
         if (!data.success) return;
 
@@ -39,28 +39,28 @@ export default function Home() {
     getTrades();
   }, []);
 
-  // 🔥 Add Trade
+  //  Add Trade
   const addTrade = async (tradeData) => {
     try {
       const { data } = await axios.post(
         "/api/trade/add-new-trade",
-        tradeData
+        tradeData,{withCredentials: true,}
       );
       toast.success("Trade Added SuccessFully.")
       
       if (!data.success) return;
       
       setTrades((prev) => [data.trade, ...prev]); 
-    } catch (err) {
+    } catch (error) {
       console.error(
         "Error creating trade:",
-        err.response?.data || err.message
+        error.response?.data || err.message
       );
       toast.err("Failed Added Trade.")
     }
   };
 
-  // 🔥 Delete Trade (UI only)
+  //  Delete Trade (UI only)
   const deleteTradeHandler = (id) => {
     setTrades((prev) => prev.filter((t) => t._id !== id));
   };

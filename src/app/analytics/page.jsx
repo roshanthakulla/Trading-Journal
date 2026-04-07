@@ -12,7 +12,7 @@ export default function AnalyticsPage() {
   useEffect(() => {
     const fetchTrades = async () => {
       try {
-        const { data } = await axios.get("/api/trade/get-all-trade");
+        const { data } = await axios.get("/api/trade/get-all-trade",{withCredentials: true,});
         if (data.success) {
           setTrades(data.trades);
         }

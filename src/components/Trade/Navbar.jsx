@@ -4,11 +4,43 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@base-ui/react";
+import { useSelector , useDispatch} from "react-redux";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { toast } from "sonner";
+import { logout } from "@/store/reducer/authReducer";
+import { CLIENT_LOGIN, CLIENT_REGISTER } from "@/routes/websitePanelRoute";
 
 
 export default function Navbar() {
+
+  const { user, isAuthenticated } = useSelector(
+  (state) => state.authStore
+);
+
     const pathname = usePathname();
 
+  const dispatch = useDispatch()
+    const router = useRouter();
+
+const handleLogout = async () => {
+  try {
+    const response = await axios.post("/api/auth/logout");
+
+    console.log("Logout Response:", response.data); // 🔍 debug
+
+    dispatch(logout());
+
+    toast.success(response.data.message);
+
+    // router.replace("/api/auth/login");
+    router.replace({CLIENT_LOGIN});
+
+  } catch (error) {
+    console.log("Logout Error:", error);
+    toast.error("Logout failed");
+  }
+};
 
   const linkClass = (path) =>
     `transition ${
@@ -43,14 +75,53 @@ export default function Navbar() {
         </nav>
 
         {/* Right */}
-        <div>
-          <Link href="/">
-            <button className="px-4 py-1.5 rounded-xl bg-blue-600 text-white text-sm shadow hover:bg-blue-700 transition">
-              + Add Trade
-            </button>
-          </Link>
-           
-        </div>
+     <div className="flex items-center gap-5">
+  {isAuthenticated ? (
+    <>
+      {/* 👤 Avatar */}
+      <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm">
+        {user?.name?.charAt(0)}
+      </div>
+
+      {/* 👋 Name */}
+      <span className="text-sm font-medium text-gray-700">
+        Hi, {user?.name}
+      </span>
+
+      {/* ➕ Add Trade */}
+      <Link href="/">
+        <button className="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700">
+          + Add Trade
+        </button>
+      </Link>
+
+      {/* 🚪 Logout */}
+      <button
+        onClick={handleLogout}
+        className="px-3 py-1.5 rounded-lg bg-red-500 text-white text-sm hover:bg-red-600"
+      >
+        Logout
+      </button>
+    </>
+  ) : (
+    <>
+      {/* 🔐 Login */}
+      <Link href={CLIENT_LOGIN}>
+        <button className="px-3 py-1.5 rounded-lg bg-gray-200 hover:bg-gray-300 text-sm">
+          Login
+        </button>
+      </Link>
+
+      {/* 📝 Signup */}
+      <Link href={CLIENT_REGISTER}>
+        <button className="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700">
+          Signup
+        </button>
+      </Link>
+    </>
+  )}
+</div>
+
 
       </div>
     </header>

@@ -8,19 +8,13 @@ const BtnLoading = ({type,text,loading,onClick,className ,...props}) => {
     <div>
      <Button 
   type={type}
-  disabled={loading}
   onClick={onClick}
   className={cn("", className)}
+  disabled={loading}
   {...props}
 >
-  {loading ? (
-    <span className="flex items-center justify-center gap-2">
-      <Loader2 className="animate-spin h-4 w-4" />
-      Loading...
-    </span>
-  ) : (
-    text
-  )}
+ {loading ? "Loading..." : text}
+
 </Button>
 
 

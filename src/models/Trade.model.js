@@ -1,5 +1,6 @@
 import { STRATEGIES } from "@/lib/strategy";
 import mongoose from "mongoose";
+import UserModel from "./User.model";
 
 const TradeModel = new mongoose.Schema(
   {
@@ -27,6 +28,12 @@ const TradeModel = new mongoose.Schema(
       enum: STRATEGIES,
       default: "Breakout"
     },
+     user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
 
     deletedAt: {
       type: Date,

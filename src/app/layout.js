@@ -3,6 +3,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import Navbar from "@/components/Trade/Navbar";
 import Footer from "@/components/Trade/Footer";
+import GlobalStoreProvider from "@/components/Application/GlobalStoreProvider";
 
 const assistantFont = Assistant({
   weight: ['400', '500','600','700', '800'],
@@ -22,10 +23,13 @@ export default function RootLayout({ children }) {
       className={`${assistantFont.className} antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <GlobalStoreProvider>
         <Navbar/>
+
         {children}
-        <Toaster richColors position="top-right" />
         <Footer/>
+        <Toaster richColors position="top-right" />
+        </GlobalStoreProvider>
       </body>
     </html>
   );

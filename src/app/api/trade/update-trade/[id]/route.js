@@ -2,6 +2,7 @@ import { dbConnect } from "@/lib/dbConnect";
 import TradeModel from "@/models/Trade.model";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 
 export async function PUT(req, { params }) {
 
@@ -17,12 +18,28 @@ const resolvedParams = await params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ success: false, message: "Invalid ID format." }, { status: 400 });
     }
+
+   const token = req.cookies.get("token")?.value;
+
+    if (!token) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
     const body = await req.json();
     
     const { type, entry, exit } = body;
 
     const updatedTrade = await TradeModel.findByIdAndUpdate(
-      id,{
+       {
+        _id: id,
+        user: decoded.userId, // ✅ ownership check
+      },
+      {
        type: type,
     entryPrice: entry,
     exitPrice: exit,

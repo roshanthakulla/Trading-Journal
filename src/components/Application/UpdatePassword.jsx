@@ -10,19 +10,19 @@ import { useForm } from "react-hook-form";
 import BtnLoading from "@/components/Trade/BtnLoading"; 
 import { z } from "zod";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
-import Link from "next/link";
-import { CLIENT_LOGIN } from "@/routes/websitePanelRoute"; 
-
+import { CLIENT_LOGIN } from "@/routes/websitePanelRoute";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 
-const RegisterPage = () => {
+const UpdatePassword = ({email}) => {
+    const router = useRouter()
       const [loading, setLoading] = React.useState(false);
       const [isTypePassword, setIsTypePassword] = useState(true);
 
       const formSchema = zSchema
-        .pick({ name:true,email: true,password: true })
+        .pick({email: true,password: true })
         .extend({confirmPassword: z.string().min(7,"Password must be at least 7 characters")})
         .refine((data) => data.password === data.confirmPassword, {
           message: "Passwords do not match",
@@ -32,25 +32,25 @@ const RegisterPage = () => {
       const form = useForm({
         resolve: zodResolver(formSchema),
         defaultValues: {
-            name:"",
-          email: "",
+            email: email,
           password: "",
           confirmPassword:""
         },
       });
       // Login handler----------->
-      const handleRegister = async (values) => {
+      const handlePasswordUpdate = async (values) => {
       try {
   setLoading(true);
-  const { data: registerResponse } = await axios.post("/api/auth/register", values);
+  const { data: passwordUpdate } = await axios.put("/api/auth/reset-password/update-password", values);
 
-  if (!registerResponse.success) 
+  if (!passwordUpdate.success) 
     {
-      throw new Error(registerResponse.message);
+      throw new Error(passwordUpdate.message);
     }
   form.reset();
 
-  toast(registerResponse.message)
+  toast(passwordUpdate.message)
+   router.push(CLIENT_LOGIN)
 } catch (error) {
   toast(error.message || "Somthing went wrong.")
   
@@ -62,56 +62,22 @@ const RegisterPage = () => {
 
   return (
     <div>
-             <Card className="w-[400]">
-        <CardContent>
-          <div className="flex justify-center mb-1">
-          <h1 className="text-lg font-bold tracking-tight">
-          <span className="text-blue-600">Trade</span>Track
-          </h1>
-          </div>
+     
+        <div>
           <div className="text-center">
-            <h1 className=" text-3xl font-bold">Sign-up</h1>
+            <h1 className=" text-3xl font-bold">Update Password</h1>
+            <p1>Create new password by filling below form.</p1>
           </div>
 
           <div className="mt-5">
             {/* // ---------------form zod validation */}
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit(handleRegister)}
+                onSubmit={form.handleSubmit(handlePasswordUpdate)}
                 className="space-y-4 mt-4"
               >  
-              {/* username-------------- */}
-                <div className="mb-5">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Full Name</FormLabel>
-                        <FormControl>
-                          <Input type="text" {...field} placeholder="Jack William" />
-                        </FormControl>
-                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                {/* Email----------------- */}
-                <div className="mb-5">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input type="email" {...field} placeholder="jackwilliam34@gmail.com" />
-                        </FormControl>
-                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+             
+             
                 {/* Password----------------- */}
                 <div className="mb-5">
                   <FormField
@@ -164,19 +130,16 @@ const RegisterPage = () => {
                   <BtnLoading
                     loading={loading}
                     type="submit"
-                    text="Create Account"
+                    text="Update Password"
                     className="w-full cursor-pointer"
                   />
                 </div>
-                 <div className=" flex justify-center items-center gap-1">
-                    <p>Already have account?</p>
-                    <Link href={CLIENT_LOGIN} className="text-primary underline">Login!</Link>
-                 </div>
+                
               </form>
             </Form>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      
     </div>
 
     
@@ -185,4 +148,4 @@ const RegisterPage = () => {
 
 
 
-export default RegisterPage;
+export default UpdatePassword;

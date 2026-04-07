@@ -12,20 +12,24 @@ import {
 } from "@/components/ui/form";
 
 import { useForm } from "react-hook-form";
-import { email, z } from "zod";
+import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import BtnLoading from "@/components/Trade/BtnLoading"; 
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import Link from "next/link";
 import { CLIENT_HOME, CLIENT_REGISTER, CLIENT_RESETPASSWORD } from "@/routes/websitePanelRoute";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import OTPForm from "@/components/Application/OTPForm";
+import {useDispatch} from "react-redux"
+import { login } from "@/store/reducer/authReducer";
 
 
  const Login = () => {
 const router = useRouter();
+const dispatch = useDispatch()
+ const searchParams = useSearchParams()
   const [loading, setLoading] = React.useState(false);
   const [otpLoading, setotpLoading] = React.useState(false);
   const [otpEmail, setOtpEmail] = React.useState();
@@ -57,10 +61,6 @@ const router = useRouter();
   
   form.reset();
   toast(loginResponse.message)
-   setTimeout(() => {
-    setLoading(false)
-    router.replace(CLIENT_HOME);
-  }, 800);
 
 } catch (error) {
    toast( error.message || 'Something went wrong')
@@ -72,25 +72,28 @@ const router = useRouter();
 };
 // otp verification
 const handleOtpVerification = async (values) =>{
+  
   try {
-  setOtpVerificationLoading(true);
+  setotpLoading(true);
   const { data: otpResponse } = await axios.post("/api/auth/verify-otp", values);
 
   if (!otpResponse.success) throw new Error(otpResponse.message);
   setOtpEmail("")
-  showToast('success',otpResponse.message)
-  dispatch(login(otpResponse.data))
+  toast(otpResponse.message)
 
-  if(searchParams.has('callback')){
-    router.push(searchParams.get('callback'))
+  dispatch(login(otpResponse.loggedInUserData))
+
+
+   if (searchParams.has('callback')) {
+      router.push(searchParams.get('callback'));
+    } else{
+    router.push(CLIENT_HOME)
   }
-  else{
-    otpResponse.data.role === 'admin' ? router.push(ADMIN_DASHBOARD) : router.push(USER_DASHBOARD) 
-  }
+  
   } catch (error) {
-   showToast('error', error?.response?.data?.message || error.message || 'Something went wrong')
+   toast( error?.response?.data?.message || error.message || 'Something went wrong')
 } finally {
-  setOtpVerificationLoading(false);
+  setotpLoading(false);
 }
 }
 
@@ -171,7 +174,7 @@ const handleOtpVerification = async (values) =>{
                     loading={loading}
                     type="submit"
                     text="Login"
-                    className="w-full cursor-pointer"
+                    className="w-full cursor-pointer text-white bg-blue-600 "
                   />
                 </div>
 
@@ -179,7 +182,7 @@ const handleOtpVerification = async (values) =>{
                 <div className="text-center">
                   <div className="flex justify-center items-center gap-1">
                     <p>Don&apos;'t have account</p>
-                    <Link href={CLIENT_REGISTER} className="underline text-primary">
+                    <Link href={CLIENT_REGISTER} className="underline text-primary  hover:text-blue-600">
                       Create account
                     </Link>
                   </div>
@@ -187,7 +190,7 @@ const handleOtpVerification = async (values) =>{
                   {/* forgot password------------ */}
                   <div>
                    
-                    <Link href={CLIENT_RESETPASSWORD} className="underline text-primary">
+                    <Link href={CLIENT_RESETPASSWORD} className="underline hover:text-blue-600">
                       Reset password?
                     </Link>
                   </div>
@@ -198,7 +201,7 @@ const handleOtpVerification = async (values) =>{
             </>
             :
             
-            <OTPForm email={otpEmail} loading={otpLoading} onSubmit={handleOtpVerification}/>
+            <OTPForm email={otpEmail} onSubmit={handleOtpVerification} loading={otpLoading} />
           }
 
           </CardContent>
