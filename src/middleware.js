@@ -7,7 +7,7 @@ export function middleware(request) {
   const { pathname } = request.nextUrl;
 
   // Protected routes
-  const protectedRoutes = ["/", "/analytics", "/history"];
+  const protectedRoutes = ["/dashboard", "/analytics", "/history"];
 
   //  Auth routes
   const authRoutes = ["/auth/login", "/auth/register"];
@@ -34,7 +34,8 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: [ "/",
+  matcher: [
+    "/dashboard",
     "/analytics",
     "/history",
     "/auth/login",

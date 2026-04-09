@@ -6,4 +6,6 @@ export const CLIENT_RESETPASSWORD = "/auth/reset-password"
 
 
 export const USER_DASHBOARD= "/my-account"
+export const CLIENT_DASHBOARD= "/my-account"
+export const DEMO_DASHBOARD= "/demo-dashboard"
 export const USER_PROFILE= "/profile"

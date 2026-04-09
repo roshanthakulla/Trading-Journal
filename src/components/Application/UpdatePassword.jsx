@@ -30,7 +30,7 @@ const UpdatePassword = ({email}) => {
         })
 
       const form = useForm({
-        resolve: zodResolver(formSchema),
+        resolver: zodResolver(formSchema),
         defaultValues: {
             email: email,
           password: "",

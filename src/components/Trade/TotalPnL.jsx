@@ -19,7 +19,24 @@ const TotalPnL = ({trades}) => {
 
   return (
 
-    <Card className="w-full rounded-2xl shadow-sm hover:shadow-md transition" >
+    // <Card className="w-full rounded-2xl shadow-sm hover:shadow-md transition" >
+    //     <CardContent className="p-5 space-y-3">  
+    //     <div className="flex justify-between items-center">
+    //         <p className='font font-semibold text-lg'>Total</p>
+    //         <p
+    //           className={`text-xl font-bold ${
+    //             totalProfit >= 0 ? "text-green-600" : "text-red-600"
+    //           }`}
+    //           > 
+    //           {totalProfit >=0 ? "+" : ""}
+    //           {totalProfit || 0}
+    //           </p>
+          
+    //     </div>
+    //     </CardContent>
+    //   </Card>
+
+     <Card className="w-full rounded-2xl shadow-sm hover:shadow-md transition" >
         <CardContent className="p-5 space-y-3">  
         <div className="flex justify-between items-center">
             <p className='font font-semibold text-lg'>Total</p>

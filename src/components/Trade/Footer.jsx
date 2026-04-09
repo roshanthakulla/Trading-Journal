@@ -10,13 +10,13 @@ export default function Footer() {
 
         {/* Center */}
         <div className="flex gap-6">
-          <span className="hover:text-black cursor-pointer transition">Privacy</span>
-          <span className="hover:text-black cursor-pointer transition">Terms</span>
-          <span className="hover:text-black cursor-pointer transition">Support</span>
+          <span className="hover:text-blue-600 hover:underline cursor-pointer transition">Privacy</span>
+          <span className="hover:text-blue-600 hover:underline cursor-pointer transition">Terms</span>
+          <span className="hover:text-blue-600 hover:underline cursor-pointer transition">Support</span>
         </div>
 
         {/* Right */}
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-gray-400 italic">
           Built with ❤️ by You
         </p>
 

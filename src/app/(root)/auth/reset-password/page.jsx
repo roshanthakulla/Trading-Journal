@@ -9,6 +9,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 
 import { useForm } from "react-hook-form";
@@ -40,7 +41,7 @@ const ResetPassword = () => {
 
 
   const form = useForm({
-    resolve: zodResolver(formSchema),
+    resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
     },
@@ -122,6 +123,7 @@ const handleOtpVerification = async (values) =>{
                         <FormControl>
                           <Input type="email" {...field} placeholder="jackwilliam34@gmail.com" />
                         </FormControl>
+                        <FormMessage /> 
                       </FormItem>
                     )}
                   />

@@ -9,6 +9,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 
 import { useForm } from "react-hook-form";
@@ -43,7 +44,7 @@ const dispatch = useDispatch()
 
 
   const form = useForm({
-    resolve: zodResolver(formSchema),
+    resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -137,6 +138,7 @@ const handleOtpVerification = async (values) =>{
                         <FormControl>
                           <Input type="email" {...field} placeholder="jackwilliam34@gmail.com" />
                         </FormControl>
+                        <FormMessage /> 
                       </FormItem>
                     )}
                   />
@@ -156,6 +158,7 @@ const handleOtpVerification = async (values) =>{
                             placeholder="*******"
                           />
                         </FormControl>
+                        <FormMessage /> 
 
                         <button
                           className=" absolute top-1/2 right-2 cursor-pointer"

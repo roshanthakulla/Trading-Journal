@@ -38,59 +38,11 @@ const TradeList = ({ trades, onDelete }) => {
   }
 
   return (
-    <div className='mt-6 grid gap-4'>
+    <div className='mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
       {trades.map((trade) => {
         const profit = getProfit(trade);
 
         return (
-          // <Card key={trade._id} className="w-full rounded-2xl shadow-sm hover:shadow-md transition">
-          //   <CardContent className="p-5 space-y-4">
-          //     <div className="flex justify-between">
-          //       <p className='font-medium capitalize'>{trade.type}</p>
-
-          //       <p
-          //         className={`font-semibold ${profit >= 0
-          //           ? "text-green-600"
-          //           : "text-red-600"
-          //           }`}
-          //       >
-          //         {profit >= 0 ? "+" : ""}
-          //         {profit}
-          //       </p>
-          //     </div>
-
-          //     <div className="text-sm text-gray-600 flex justify-between">
-          //       <p>Entry: {trade.entryPrice}</p>
-          //       <p>Exit: {trade.exitPrice}</p>
-          //     </div>
-
-          //     <div className="text-sm text-gray-600 flex justify-between">
-          //       <p>Qty: {trade.qty || 1}</p>
-          //       <p className="text-xs bg-gray-100 px-2 py-1 rounded">
-          //         {trade.strategy || "No Strategy"}
-          //       </p>
-          //     </div>
-
-          //     <div className="flex gap-2 mt-2">
-          //       <Button
-          //         size="sm"
-
-          //         onClick={() => router.push(`/trade/update-trade/${trade._id}`)}
-          //       >
-          //         Edit
-          //       </Button>
-
-
-          //       <Button
-          //         variant="destructive"
-          //         size="sm"
-          //         onClick={() => handleDelete(trade._id)}
-          //       >
-          //         Delete
-          //       </Button>
-          //     </div>
-          //   </CardContent>
-          // </Card>
            <Card
         key={trade._id}
         className="w-full rounded-2xl shadow-sm hover:shadow-md transition"
