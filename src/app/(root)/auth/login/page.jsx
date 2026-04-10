@@ -102,7 +102,7 @@ const handleOtpVerification = async (values) =>{
 
   return (
     <div>
-      <Card className="w-[400]">
+      <Card className="w-[400px]">
         <CardContent>
           
           <div className="flex justify-center">

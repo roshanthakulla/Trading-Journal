@@ -62,8 +62,10 @@ const RegisterPage = () => {
 
   return (
     <div>
-             <Card className="w-[400]">
+             <Card className="w-[400px]">
         <CardContent>
+
+          
           <div className="flex justify-center mb-1">
           <h1 className="text-lg font-bold tracking-tight">
           <span className="text-blue-600">Trade</span>Track
@@ -165,12 +167,12 @@ const RegisterPage = () => {
                     loading={loading}
                     type="submit"
                     text="Create Account"
-                    className="w-full cursor-pointer"
+                    className="w-full cursor-pointer bg-blue-600"
                   />
                 </div>
                  <div className=" flex justify-center items-center gap-1">
                     <p>Already have account?</p>
-                    <Link href={CLIENT_LOGIN} className="text-primary underline">Login!</Link>
+                    <Link href={CLIENT_LOGIN} className="text-primary underline hover:text-blue-600">Login!</Link>
                  </div>
               </form>
             </Form>
